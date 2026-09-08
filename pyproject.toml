@@ -1,0 +1,76 @@
+[project]
+name = "ida-pro-mcp-headless"
+version = "1.0.0"
+description = "MCP server that lets LLMs drive headless IDA Pro"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "lzyddf" }]
+keywords = ["ida", "mcp", "llm", "reverse-engineering"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "mcp>=1.16.0,<2",
+    "typing-extensions>=4.12.0; python_version < '3.12'",
+]
+
+[project.urls]
+Repository = "https://github.com/lzyddf/ida-pro-mcp"
+Issues = "https://github.com/lzyddf/ida-pro-mcp/issues"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6.0",
+]
+
+[project.scripts]
+ida-pro-mcp-headless = "ida_pro_mcp.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["error"]
+markers = [
+    "integration: opt-in tests that launch a licensed headless IDA instance",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["src/ida_pro_mcp.egg-info", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # bugbear
+    "UP",   # pyupgrade
+    "SIM",  # simplify
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",  # line too long (we set 110, occasional overflow is ok)
+    "B008",  # function calls in defaults (FastAPI/pydantic Field idiom)
+    "SIM108", # ternary suggestion (sometimes hurts readability)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]
+"src/ida_pro_mcp/plugin/__init__.py" = ["E402", "F401"]
+"src/ida_pro_mcp/plugin/headless_bootstrap.py" = ["E402"]  # IDA-side bootstrap reorders imports after sys.path patching

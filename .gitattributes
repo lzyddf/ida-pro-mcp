@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.i64 binary
+*.idb binary
